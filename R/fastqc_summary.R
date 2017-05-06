@@ -16,10 +16,11 @@
 ##Date: 2017/05/01
 ################################################################################
 #options(width=80)
-options(width=180)
+options(width=140)
 library("ggplot2")
 library("reshape2")
 library("cowplot")
+library("splines")
 ################################################################################
 ##-Basic_Statistics
 ##  File, Type, Encoding, Sequences, PoorQC, Length, %GC
@@ -66,27 +67,31 @@ totalOS
 ################################################################################
 ##-Per_base_sequence_quality
 ################################################################################
-filePBSQ<-list.files(path=".", pattern="Per_base_sequence_quality")
-pbsq<-lapply(filePBSQ, read.table, sep="\t", comment.char ="*", 
-    header=TRUE)
-pbsq<-do.call(rbind,lapply(1:length(filePBSQ), function(x){
-    pbsq[[x]]$File<-filePBSQ[x]
-    return(pbsq[[x]])
-}))
-names(pbsq)<-c("Base", "Mean", "Q2", "Q1", "Q3", "P10", "P90", "File")
+readPBSQ<-function(filePBSQ){
+    pbsq<-lapply(filePBSQ, read.table, sep="\t", comment.char ="*", 
+        header=TRUE)
+    pbsq<-do.call(rbind,lapply(1:length(filePBSQ), function(x){
+        pbsq[[x]]$File<-filePBSQ[x]
+        return(pbsq[[x]])
+    }))
+    names(pbsq)<-c("Base", "Mean", "Q2", "Q1", "Q3", "P10", "P90", "File")
 
-##Change the name to include additional data.
-aux<-as.data.frame(do.call(rbind, strsplit(gsub(pbsq$File, 
-    pattern="_fastqc_data.txt.Per_base_sequence_quality", replacement=""),
-    split="_")))
-names(aux)<-c("Subject", "NA1", "Flowcell", "Lane", "PairEnd")
-pbsq$File<-NULL
-pbsq<-cbind(pbsq, aux)
-##Order the Base levels
-pbsq$Base<-factor(as.character(pbsq$Base), 
-        levels=levels(pbsq$Base)[
-            order(as.integer(unlist(lapply(strsplit(
-                levels(pbsq$Base), split="-"), function(x)x[1]))))])
+    ##Change the name to include additional data.
+    aux<-as.data.frame(do.call(rbind, strsplit(gsub(pbsq$File, 
+        pattern="_fastqc_data.txt.Per_base_sequence_quality", replacement=""),
+        split="_")))
+    names(aux)<-c("Subject", "NA1", "Flowcell", "Lane", "PairEnd")
+    pbsq$File<-NULL
+    pbsq<-cbind(pbsq, aux)
+    ##Order the Base levels
+    pbsq$Base<-factor(as.character(pbsq$Base), 
+            levels=levels(pbsq$Base)[
+                order(as.integer(unlist(lapply(strsplit(
+                    levels(pbsq$Base), split="-"), function(x)x[1]))))])
+    return(pbsq)
+}
+filePBSQ<-list.files(path=".", pattern="Per_base_sequence_quality")
+pbsq<-readPBSQ(filePBSQ)
 
 ##Single per base sequence quality plot#########################################
 singlePerBaseQuality<- function(datum){
@@ -116,17 +121,36 @@ datum<-subset(pbsq, Subject=="SM-3MG3L" & Lane=="L1" & PairEnd=="1")
 singlePerBaseQuality(datum)
 
 ##Smooth per base sequence quality plot#########################################
+#Transparency work around 
+# http://tinyheero.github.io/2015/09/15/semi-transparency-r.html
+#in ~./Rprofile
+#setHook(packageEvent("grDevices", "onLoad"),
+#function(...) grDevices::X11.options(type='cairo'))
+#options(device='x11')
+
 data<-pbsq
 #smoothPerBaseQuality<- function(data){
     data
+    type<-"Mean"
+    data$x<-as.integer(unclass(data$Base))
     xMax<-length(levels(data$Base))
     background<-data.frame(
                     x=rep(c(0,xMax,xMax,0),3),
                     y=c(c(0,0,20,20),c(20,20,28,28),c(28,28,42,42)),
                     Quality=c(rep("Bad", 4),rep("Intermediate", 4),rep("Good", 4)))
     sp<-ggplot()+
-        geom_polygon(data=background, aes(x=x, y=y, group=Quality, fill=Quality))+
-        geom_
+        #geom_polygon(data=background, aes(x=x, y=y, group=Quality, fill=Quality))+
+        geom_smooth(data=data, aes(x=x, y=Mean), method="auto")+ 
+        geom_smooth(data=data, aes(x=x, y=Q1), method="auto") +
+        geom_smooth(data=data, aes(x=x, y=Q2), method="auto") +
+        geom_smooth(data=data, aes(x=x, y=Q3), method="auto") +
+        geom_smooth(data=data, aes(x=x, y=P10), method="auto") +
+        geom_smooth(data=data, aes(x=x, y=P90), method="auto") 
+        
+        
+        #formula = y ~ bs(x, 3), se=TRUE)
+        
+    sp   
         
         geom_boxplot(data=datum, aes(x=x, ymin=P10, lower=Q1, middle=Q2, 
             upper=Q3, ymax=P90, group=Base), stat = "identity", fill="yellow")+
@@ -159,6 +183,5 @@ Per_base_sequence_quality
 12      92.0
 13      239.0
 14      460.0
-
 
 
