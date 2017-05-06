@@ -227,7 +227,7 @@ spr <- plot_region(data$Mean, data$Q2, data$x, in_color, in_color, spr)
 spr <- plot_quality_limits(spr)
 spr <- plot_trend_line(coordinates=data.frame(x=data$x, y=data$Q2), median_color, spr)
 spr <- plot_trend_line(coordinates=data.frame(x=data$x, y=data$Mean), mean_color, spr)
-spr
+spr 
 
 ## FIXME Add legends and axis labels
 
