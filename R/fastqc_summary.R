@@ -167,6 +167,18 @@ data<-pbsq
         x=c(1:xMax, xMax:1),
         y=c(tapply(data$P10, INDEX=data$x, min),
             tapply(data$P90, INDEX=data$x, max)[xMax:1]))
+
+smooth_polygon_edge <- function(data) {
+    smooth_model <- loess(y ~ x, data=data)
+    smooth_data <- predict(smooth_model)
+    return(smooth_data)
+}
+
+            
+    r11<-data.frame(
+        x=1:xMax,
+        y=tapply(data$P10, INDEX=data$x, min))                
+            
     spr<-ggplot()+
         geom_polygon(data=r1, aes(x=x,y=y), fill="grey96", alpha=1)+
         geom_jitter(data=data, aes(x=x, y=P90), color="grey96", alpha=0.01)+
