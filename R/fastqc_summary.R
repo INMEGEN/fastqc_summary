@@ -193,17 +193,34 @@ region1 <- polygon_from_region(data$P10, data$P90, data$x)
 region2 <- polygon_from_region(data$Q1, data$Q3, data$x)
 region3 <- polygon_from_region(data$Mean, data$Q2, data$x)
 
-spr<-ggplot()+
-    geom_polygon(data=region1, aes(x=x,y=y), fill="grey96", alpha=1)+
+plot_region <- function(inferior_limit, superior_limit, x, region_color, dots_color, plot=ggplot()) {
+    data <- data.frame(inferior_limit, superior_limit, x)
+    return(
+    plot+
+    geom_polygon(
+        data=polygon_from_region(inferior_limit, superior_limit, x),
+        aes(x=x,y=y),
+        fill=region_color,
+        alpha=1
+    )+
+    geom_jitter(data=data, aes(x=x, y=superior_limit), color=dots_color, alpha=0.01)+
+    geom_jitter(data=data, aes(x=x, y=inferior_limit), color=dots_color, alpha=0.01))
+}
+
+spr <- plot_region(data$P10, data$P90, data$x, "grey96")
+spr <- plot_region(data$Q1, data$Q3, data$x, "grey86", spr)
+spr <- plot_region(data$Mean, data$Q2, data$x, "grey76", spr)
+spr
+
+geom_polygon(data=region1, aes(x=x,y=y), fill="grey96", alpha=1)+
     geom_jitter(data=data, aes(x=x, y=P90), color="grey96", alpha=0.01)+
     geom_jitter(data=data, aes(x=x, y=P10), color="grey96", alpha=0.01)+
-    geom_polygon(data=region2, aes(x=x,y=y), fill="grey72", alpha=1)+
-    geom_jitter(data=data, aes(x=x, y=P90), color="grey72", alpha=0.01)+
-    geom_jitter(data=data, aes(x=x, y=P10), color="grey72", alpha=0.01)+
-    geom_polygon(data=region3, aes(x=x,y=y), fill="grey32", alpha=1)+
-    geom_jitter(data=data, aes(x=x, y=P90), color="grey32", alpha=0.01)+
-    geom_jitter(data=data, aes(x=x, y=P10), color="grey32", alpha=0.01)
-    
+    geom_polygon(data=region2, aes(x=x,y=y), fill="grey90", alpha=0.1)+
+    geom_jitter(data=data, aes(x=x, y=Q1), color="grey90", alpha=0.01)+
+    geom_jitter(data=data, aes(x=x, y=Q3), color="grey90", alpha=0.01)+
+    geom_polygon(data=region3, aes(x=x,y=y), fill="grey80", alpha=0.1)+
+    geom_jitter(data=data, aes(x=x, y=Mean), color="grey80", alpha=0.01)+
+    geom_jitter(data=data, aes(x=x, y=Q2), color="grey80", alpha=0.01)
 spr
 
         geom_hline(aes(yintercept=20), linetype="dashed", color="red", alpha=0.5)+
