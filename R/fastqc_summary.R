@@ -138,19 +138,24 @@ data<-pbsq
                     x=rep(c(0,xMax,xMax,0),3),
                     y=c(c(0,0,20,20),c(20,20,28,28),c(28,28,42,42)),
                     Quality=c(rep("Bad", 4),rep("Intermediate", 4),rep("Good", 4)))
+    tapply(data$P10, INDEX=data$x,sd)                
+                    
     sp<-ggplot()+
-        #geom_polygon(data=background, aes(x=x, y=y, group=Quality, fill=Quality))+
-        geom_smooth(data=data, aes(x=x, y=Mean), method="auto")+ 
-        geom_smooth(data=data, aes(x=x, y=Q1), method="auto") +
-        geom_smooth(data=data, aes(x=x, y=Q2), method="auto") +
-        geom_smooth(data=data, aes(x=x, y=Q3), method="auto") +
-        geom_smooth(data=data, aes(x=x, y=P10), method="auto") +
-        geom_smooth(data=data, aes(x=x, y=P90), method="auto") 
+        geom_polygon(data=background, aes(x=x, y=y, group=Quality, fill=Quality))+
+#         geom_smooth(data=data, aes(x=x, y=P90), method="auto") +
+#         geom_smooth(data=data, aes(x=x, y=Q3), method="auto") +
+#         geom_smooth(data=data, aes(x=x, y=Mean), method="auto")+ 
+#         geom_smooth(data=data, aes(x=x, y=Q2), method="auto") +
+#         geom_smooth(data=data, aes(x=x, y=Q1), method="auto") +
+         geom_jitter(data=data, aes(x=x, y=P10), alpha=0.03)+
+         geom_smooth(data=data, aes(x=x, y=P10), se=FALSE) 
+    sp     
+        #formula = y ~ bs(x, 3), se=TRUE)	
         
         
-        #formula = y ~ bs(x, 3), se=TRUE)
-        
-    sp   
+    ggplot(mpg, aes(displ, hwy)) +  geom_point() +  geom_smooth(se=FALSE)    
+    
+    
         
         geom_boxplot(data=datum, aes(x=x, ymin=P10, lower=Q1, middle=Q2, 
             upper=Q3, ymax=P90, group=Base), stat = "identity", fill="yellow")+
