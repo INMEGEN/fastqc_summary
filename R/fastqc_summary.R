@@ -202,7 +202,8 @@ spr<-ggplot()+
     geom_jitter(data=data, aes(x=x, y=P10), color="grey72", alpha=0.01)+
     geom_polygon(data=region3, aes(x=x,y=y), fill="grey32", alpha=1)+
     geom_jitter(data=data, aes(x=x, y=P90), color="grey32", alpha=0.01)+
-    geom_jitter(data=data, aes(x=x, y=P10), color="grey32", alpha=0.01)+
+    geom_jitter(data=data, aes(x=x, y=P10), color="grey32", alpha=0.01)
+    
 spr
 
         geom_hline(aes(yintercept=20), linetype="dashed", color="red", alpha=0.5)+
