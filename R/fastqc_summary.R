@@ -209,56 +209,24 @@ plot_quality_limits <- function(plot) {
         geom_hline(aes(yintercept=28), linetype="dashed", color="green", alpha=0.5))
 }
 
-spr <- plot_region(data$P10, data$P90, data$x, "grey80", "grey80")
-spr <- plot_region(data$Q1, data$Q3, data$x, "grey70", "grey70", spr)
-spr <- plot_region(data$Mean, data$Q2, data$x, "grey60", "grey60", spr)
+plot_trend_line <- function(coordinates, color, plot=ggplot()) {
+    return(plot +
+        geom_smooth(data=coordinates, aes(x=x, y=y), color=color, se=FALSE))
+}
+
+out_color="#eded44"
+middle_color="#48c9ef"
+in_color="#010cb1"
+mean_color="#e1a9c2"
+median_color="#764f6f"
+
+spr <- plot_region(data$P10, data$P90, data$x, out_color, out_color)
+spr <- plot_region(data$Q1, data$Q3, data$x, middle_color, middle_color, spr)
+spr <- plot_region(data$Mean, data$Q2, data$x, in_color, in_color, spr)
 spr <- plot_quality_limits(spr)
+spr <- plot_trend_line(coordinates=data.frame(x=data$x, y=data$Q2), median_color, spr)
+spr <- plot_trend_line(coordinates=data.frame(x=data$x, y=data$Mean), mean_color, spr)
 spr
-
-geom_polygon(data=region1, aes(x=x,y=y), fill="grey96", alpha=1)+
-    geom_jitter(data=data, aes(x=x, y=P90), color="grey96", alpha=0.01)+
-    geom_jitter(data=data, aes(x=x, y=P10), color="grey96", alpha=0.01)+
-    geom_polygon(data=region2, aes(x=x,y=y), fill="grey90", alpha=0.1)+
-    geom_jitter(data=data, aes(x=x, y=Q1), color="grey90", alpha=0.01)+
-    geom_jitter(data=data, aes(x=x, y=Q3), color="grey90", alpha=0.01)+
-    geom_polygon(data=region3, aes(x=x,y=y), fill="grey80", alpha=0.1)+
-    geom_jitter(data=data, aes(x=x, y=Mean), color="grey80", alpha=0.01)+
-    geom_jitter(data=data, aes(x=x, y=Q2), color="grey80", alpha=0.01)
-spr
-
-        geom_hline(aes(yintercept=20), linetype="dashed", color="red", alpha=0.5)+
-        geom_hline(aes(yintercept=28), linetype="dashed", color="green", alpha=0.5)+
-        geom_jitter(data=data, aes(x=x, y=P90), alpha=0.03)+
-        #geom_smooth(data=data, aes(x=x, y=P90), se=FALSE)+
-        geom_jitter(data=data, aes(x=x, y=P10), alpha=0.03)+
-        #geom_smooth(data=data, aes(x=x, y=P10), se=FALSE)+
-        geom_jitter(data=data, aes(x=x, y=Q1), color="green", alpha=0.03)+
-        #geom_smooth(data=data, aes(x=x, y=Q1), color="green", se=FALSE)+
-        geom_jitter(data=data, aes(x=x, y=Q3), color="green", alpha=0.03)+
-        #geom_smooth(data=data, aes(x=x, y=Q3), color="green", se=FALSE)+
-        geom_jitter(data=data, aes(x=x, y=Q2), color="brown", alpha=0.03)+
-        geom_smooth(data=data, aes(x=x, y=Q2), color="brown", se=FALSE)+
-        geom_jitter(data=data, aes(x=x, y=Mean), color="purple", alpha=0.03)+
-        geom_smooth(data=data, aes(x=x, y=Mean), color="purple", se=FALSE)+
-        xlab("Position in read (bp)")+
-        scale_x_continuous(breaks=data$x, labels=data$Base)+
-        theme(axis.text.x=element_text(angle=45, hjust=1))
-        ##FIXME: add color legend!!!
-    spr     
-    
-    head(data) 
-    tapply(data$P10, INDEX=data$Base, median)
-    
-    
- 
-
-
-
-
-
-
-
-
 
 
 
