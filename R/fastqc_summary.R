@@ -189,10 +189,6 @@ polygon_from_region <- function(inferior_limit, superior_limit, x){
     )
 }
 
-region1 <- polygon_from_region(data$P10, data$P90, data$x)
-region2 <- polygon_from_region(data$Q1, data$Q3, data$x)
-region3 <- polygon_from_region(data$Mean, data$Q2, data$x)
-
 plot_region <- function(inferior_limit, superior_limit, x, region_color, dots_color, plot=ggplot()) {
     data <- data.frame(inferior_limit, superior_limit, x)
     return(
@@ -201,15 +197,22 @@ plot_region <- function(inferior_limit, superior_limit, x, region_color, dots_co
         data=polygon_from_region(inferior_limit, superior_limit, x),
         aes(x=x,y=y),
         fill=region_color,
-        alpha=1
+        alpha=0.1
     )+
-    geom_jitter(data=data, aes(x=x, y=superior_limit), color=dots_color, alpha=0.01)+
-    geom_jitter(data=data, aes(x=x, y=inferior_limit), color=dots_color, alpha=0.01))
+    geom_jitter(data=data, aes(x=x, y=superior_limit), color=dots_color, alpha=0.3)+
+    geom_jitter(data=data, aes(x=x, y=inferior_limit), color=dots_color, alpha=0.3))
 }
 
-spr <- plot_region(data$P10, data$P90, data$x, "grey96")
-spr <- plot_region(data$Q1, data$Q3, data$x, "grey86", spr)
-spr <- plot_region(data$Mean, data$Q2, data$x, "grey76", spr)
+plot_quality_limits <- function(plot) {
+    return(plot +
+        geom_hline(aes(yintercept=20), linetype="dashed", color="red", alpha=0.5) +
+        geom_hline(aes(yintercept=28), linetype="dashed", color="green", alpha=0.5))
+}
+
+spr <- plot_region(data$P10, data$P90, data$x, "grey80", "grey80")
+spr <- plot_region(data$Q1, data$Q3, data$x, "grey70", "grey70", spr)
+spr <- plot_region(data$Mean, data$Q2, data$x, "grey60", "grey60", spr)
+spr <- plot_quality_limits(spr)
 spr
 
 geom_polygon(data=region1, aes(x=x,y=y), fill="grey96", alpha=1)+
