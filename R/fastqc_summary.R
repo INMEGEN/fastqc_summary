@@ -139,10 +139,12 @@ data<-pbsq
                     y=c(c(0,0,20,20),c(20,20,28,28),c(28,28,42,42)),
                     Quality=c(rep("Bad", 4),rep("Intermediate", 4),rep("Good", 4)))
     tapply(data$P10, INDEX=data$x,sd)                
-                    
+                
     sp<-ggplot()+
         geom_hline(aes(yintercept=20), color="red", alpha=0.5)+
         geom_hline(aes(yintercept=28), color="green", alpha=0.5)+
+        geom_jitter(data=data, aes(x=x, y=P90), alpha=0.03)+
+        geom_smooth(data=data, aes(x=x, y=P90), se=FALSE)+
         geom_jitter(data=data, aes(x=x, y=P10), alpha=0.03)+
         geom_smooth(data=data, aes(x=x, y=P10), se=FALSE)+
         geom_jitter(data=data, aes(x=x, y=Q1), color="green", alpha=0.03)+
@@ -151,8 +153,8 @@ data<-pbsq
         geom_smooth(data=data, aes(x=x, y=Q3), color="green", se=FALSE)+
         geom_jitter(data=data, aes(x=x, y=Q2), color="brown", alpha=0.03)+
         geom_smooth(data=data, aes(x=x, y=Q2), color="brown", se=FALSE)+
-        geom_jitter(data=data, aes(x=x, y=P90), alpha=0.03)+
-        geom_smooth(data=data, aes(x=x, y=P90), se=FALSE)+
+        geom_jitter(data=data, aes(x=x, y=Mean), color="purple", alpha=0.03)+
+        geom_smooth(data=data, aes(x=x, y=Mean), color="purple", se=FALSE)+
         xlab("Position in read (bp)")+
         scale_x_continuous(breaks=data$x, labels=data$Base)+
         theme(axis.text.x=element_text(angle=45, hjust=1))       
