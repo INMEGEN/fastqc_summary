@@ -215,10 +215,11 @@ plot_trend_line <- function(coordinates, color, plot=ggplot()) {
 }
 
 out_color="#eded44"
-middle_color="#48c9ef"
-in_color="#010cb1"
-mean_color="#e1a9c2"
-median_color="#764f6f"
+#middle_color="#48c9ef"
+middle_color="#01cbf3"
+in_color="#43640b"
+mean_color="#fdd65d"
+median_color="#f6a801"
 
 spr <- plot_region(data$P10, data$P90, data$x, out_color, out_color)
 spr <- plot_region(data$Q1, data$Q3, data$x, middle_color, middle_color, spr)
@@ -228,6 +229,7 @@ spr <- plot_trend_line(coordinates=data.frame(x=data$x, y=data$Q2), median_color
 spr <- plot_trend_line(coordinates=data.frame(x=data$x, y=data$Mean), mean_color, spr)
 spr
 
+## FIXME Add legends and axis labels
 
 
 Histograma antes y despues a nivel del promedio de la lectura?
