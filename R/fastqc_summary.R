@@ -141,16 +141,22 @@ data<-pbsq
     tapply(data$P10, INDEX=data$x,sd)                
                     
     sp<-ggplot()+
-        geom_polygon(data=background, aes(x=x, y=y, group=Quality, fill=Quality))+
-#         geom_smooth(data=data, aes(x=x, y=P90), method="auto") +
-#         geom_smooth(data=data, aes(x=x, y=Q3), method="auto") +
-#         geom_smooth(data=data, aes(x=x, y=Mean), method="auto")+ 
-#         geom_smooth(data=data, aes(x=x, y=Q2), method="auto") +
-#         geom_smooth(data=data, aes(x=x, y=Q1), method="auto") +
-         geom_jitter(data=data, aes(x=x, y=P10), alpha=0.03)+
-         geom_smooth(data=data, aes(x=x, y=P10), se=FALSE) 
+        geom_hline(aes(yintercept=20), color="red", alpha=0.5)+
+        geom_hline(aes(yintercept=28), color="green", alpha=0.5)+
+        geom_jitter(data=data, aes(x=x, y=P10), alpha=0.03)+
+        geom_smooth(data=data, aes(x=x, y=P10), se=FALSE)+
+        geom_jitter(data=data, aes(x=x, y=Q1), color="green", alpha=0.03)+
+        geom_smooth(data=data, aes(x=x, y=Q1), color="green", se=FALSE)+
+        geom_jitter(data=data, aes(x=x, y=Q3), color="green", alpha=0.03)+
+        geom_smooth(data=data, aes(x=x, y=Q3), color="green", se=FALSE)+
+        geom_jitter(data=data, aes(x=x, y=Q2), color="brown", alpha=0.03)+
+        geom_smooth(data=data, aes(x=x, y=Q2), color="brown", se=FALSE)+
+        geom_jitter(data=data, aes(x=x, y=P90), alpha=0.03)+
+        geom_smooth(data=data, aes(x=x, y=P90), se=FALSE)+
+        xlab("Position in read (bp)")+
+        scale_x_continuous(breaks=data$x, labels=data$Base)+
+        theme(axis.text.x=element_text(angle=45, hjust=1))       
     sp     
-        #formula = y ~ bs(x, 3), se=TRUE)	
         
         
     ggplot(mpg, aes(displ, hwy)) +  geom_point() +  geom_smooth(se=FALSE)    
