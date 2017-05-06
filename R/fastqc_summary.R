@@ -168,13 +168,29 @@ data<-pbsq
         y=c(tapply(data$P10, INDEX=data$x, min),
             tapply(data$P90, INDEX=data$x, max)[xMax:1]))
 
-smooth_polygon_edge <- function(data) {
-    smooth_model <- loess(y ~ x, data=data)
+smooth_polygon_edge <- function(coordinates) {
+    smooth_model <- loess(y ~ x, data=coordinates)
     smooth_data <- predict(smooth_model)
     return(smooth_data)
 }
 
-            
+polygon_from_region <- function(inferior_limit, superior_limit, x){
+    xMax <- max(x)
+    stopifnot(length(inferior_limit) == length(superior_limit))
+    return(
+        data.frame(
+            x=c(1:xMax, xMax:1),
+            y=c(tapply(inferior_limit, INDEX=x, min),
+                tapply(superior_limit, INDEX=x, max)[xMax:1])
+        )
+    )
+}
+
+region1 <- polygon_from_region(data$P10, data$P90, data$x)
+region2 <- polygon_from_region(data$Q1, data$Q3, data$x)
+region3 <- polygon_from_region(data$Mean, data$Q2, data$x)
+
+
     r11<-data.frame(
         x=1:xMax,
         y=tapply(data$P10, INDEX=data$x, min))                
