@@ -132,7 +132,8 @@ plot_legend <-function(plot) {
 plot_axis <-function(plot_obj, data) {
 	x_breaks <- c(1:9, seq(from=11, to=38, by=3))
 	x_labels <- levels(data$Base)[x_breaks]
-	plot_obj <- plot_obj + scale_x_continuous(breaks=x_breaks, labels=x_labels)
+	plot_obj <- plot_obj + scale_x_continuous(breaks=x_breaks, labels=x_labels)+
+		theme(axis.text.x=element_text(angle=45, hjust=1))
 	return(plot_obj)
 }
 
@@ -146,7 +147,7 @@ quality_plot <- function(data, out_color="#eded44", middle_color="#01cbf3", in_c
 	quality_p <- plot_quality_limits(quality_p)
 	quality_p <- plot_trend_line(coordinates=data.frame(x=data$x, y=data$Q2), median_color, quality_p)
 	quality_p <- plot_trend_line(coordinates=data.frame(x=data$x, y=data$Mean), mean_color, quality_p)
-	quality_p <- plot_labels(quality_p, "Position in read (bp)", "Quality (10 ⨉ -log(pe))")
+	quality_p <- plot_labels(quality_p, "Position in read (bp)", "Quality (Phred Score)")
 	quality_p <- plot_axis(quality_p, data)
 	return(quality_p)
 }
