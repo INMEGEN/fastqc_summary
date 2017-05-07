@@ -1,11 +1,22 @@
-source("per_base_sequence_quality.R")
+rm(list=ls())
+#load("/home/cfresno/ssh/castillo/tmp/Comparison.RData")
+rm(list=ls()[!ls()%in%c("raw_data", "bgi_data", "inmegen_data")])
+
+source("./R/per_base_sequence_quality.R")
+source("./R/per_sequence_quality_scores.R")
 library("ggplot2")
 library("reshape2")
 library("cowplot")
 
-raw <- quality_plot("/home/cfresno/ssh/castillo/tmp/pbsq")
-bgi <- quality_plot("/home/cfresno/ssh/castillo/tmp/pbsq")
-inmegen <- quality_plot("/home/cfresno/ssh/castillo/tmp/pbsq")
+#data_dir_example <- "/home/cfresno/ssh/castillo/tmp/pbsq"
+
+raw_data <- read_data("data/raw")
+bgi_data <- read_data("data/clean")
+inmegen_data <- read_data("data/trimmomatic")
+
+raw <- quality_plot(data=raw_data)
+bgi <- quality_plot(bgi_data)
+inmegen <- quality_plot(inmegen_data)
 
 ##Full data fastqc plots
 comparison <- plot_grid(
@@ -15,12 +26,9 @@ comparison <- plot_grid(
 	nrow=2,
 	rel_heights=c(0.05, 0.95)
 )
-
 comparison
 
 ## Summary fastqc plots
-raw_data <- read_data("/home/cfresno/ssh/castillo/tmp/pbsq")
-
 compare <- plot_grid(
 	plotlist=list(NULL, NULL, 
         fastqc_plot(fastq_summary(raw_data)),
@@ -33,7 +41,14 @@ compare <- plot_grid(
 )
 compare
 
+#data_dir<-"/home/cfresno/ssh/castillo/tmp/summary/data"
+#data <- readPSQS(data_dir, group="Raw")
+#mean_quality <- plot_mean_quality_density(data)
 
+raw_psqs <- readPSQS("data/raw", group="Raw")
+bgi_psqs <- readPSQS("data/clean", group="BGI")
+inmegen_psqs <- readPSQS("data/trimmomatic", group="INMEGEN")
 
+mean_quality <- plot_mean_quality_density(data)
 
-
+#save.image(file="results/Comparison.RData", compress="xz")

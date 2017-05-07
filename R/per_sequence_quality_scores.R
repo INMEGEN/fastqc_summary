@@ -30,8 +30,3 @@ plot_mean_quality_density<-function(data){
         theme(legend.position="bottom")
     return(plot_obj)
 }
-
-data_dir<-"/home/cfresno/ssh/castillo/tmp/summary/data"
-data <- readPSQS(data_dir, group="Raw")
-plot_mean_quality_density(data)
-
