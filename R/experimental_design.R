@@ -33,9 +33,30 @@ plot_sequencing <- function(fastq){
 	return(plot_design)
 }
 
+plot_reads_per_subject <- function(fastq){
+	total_reads <- tapply(fastq$Reads, INDEX=fastq$Subject, sum)
+	total_reads <- sort(total_reads)
+	subjects <- names(total_reads)
+	fastq$Subject <- factor(as.character(fastq$Subject), levels=subjects)
+	plot_reads <- ggplot(data=fastq, aes(x=Subject, y=Reads, fill=Sequencer)) + geom_boxplot() +
+		geom_line(data=data.frame(
+			Subject=factor(subjects, levels=subjects), 
+			Total_Reads= total_reads
+			), 
+			aes(x=Subject, y=Total_Reads, color=Subject))
+	return(plot_reads)
+}
+
 fastq <- read_data()
 fastq <- check_integrity(fastq)
-plot_sequencing(fastq)
+#plot_sequencing(fastq)
+plot_reads_per_subject(fastq)
 
-
-
+#How many Flowcell were used by each subject?
+table(rowSums(with(unique(fastq[, c("Subject", "Flowcell")]), table(Subject, Flowcell))))
+# 1  2  3 
+#63 19  4
+#Are there sequencer effect? 
+table(rowSums(with(unique(fastq[, c("Subject", "Sequencer")]), table(Subject, Sequencer))))
+# 1  2  3 
+#65 19  2 
