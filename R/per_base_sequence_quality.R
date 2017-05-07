@@ -125,7 +125,7 @@ plot_legend <-function(plot) {
 	x_labels <- levels(data$Base)[x_breaks]
 	plot <- plot + scale_x_continuous(breaks=x_breaks, labels=x_labels)
 	y_breaks <- seq(from=0, to=42, by=2)
-	plot <- plot + ylim(0, 42) + scale_y_continuous(breaks=y_breaks, labels=as.character(y_breaks))
+	plot <- plot + scale_y_continuous(breaks=y_breaks, labels=as.character(y_breaks))
 	return(plot)
 }
 
@@ -134,7 +134,7 @@ plot_axis <-function(plot_obj, data) {
 	x_labels <- levels(data$Base)[x_breaks]
 	plot_obj <- plot_obj + scale_x_continuous(breaks=x_breaks, labels=x_labels)
 	y_breaks <- seq(from=0, to=42, by=2)
-	plot_obj <- plot_obj + ylim(0, 42) + scale_y_continuous(breaks=y_breaks, labels=as.character(y_breaks))
+	plot_obj <- plot_obj + scale_y_continuous(breaks=y_breaks, labels=as.character(y_breaks), limits=c(0,42))
 	return(plot_obj)
 }
 
