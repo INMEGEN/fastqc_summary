@@ -24,8 +24,8 @@ check_integrity <- function(fastq){
 }
 
 plot_sequencing <- function(fastq){
-	plot_design <- ggplot(data=fastq, aes(x=Lane, y=Subject, color=Subject)) +
-		geom_point() + geom_jitter() + facet_grid(Pair ~ Sequencer) 
+	plot_design <- ggplot(data=fastq, aes(x=Lane, y=Subject, fill=Subject)) +
+		geom_tile() + facet_grid(. ~ Sequencer) 
 	return(plot_design)
 }
 
