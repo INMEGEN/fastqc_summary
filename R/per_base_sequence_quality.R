@@ -68,20 +68,18 @@ polygon_from_region <- function(inferior_limit, superior_limit, x){
     )
 }
 
-plot_region <- function(inferior_limit, superior_limit, x, region_color, dots_color, plot_obj=ggplot()) {
-    datas <- data.frame(inferior_limit, superior_limit, x)
-    polygon_data <- polygon_from_region(inferior_limit, superior_limit, x)
-    force(polygon_data)
-    plot_obj <- plot_obj+
+plot_region <- function(inferior_limit, superior_limit, x, region_color, dots_color, plot=ggplot()) {
+    data <- data.frame(inferior_limit, superior_limit, x)
+    return(
+    plot+
     geom_polygon(
-        data=polygon_data,
+        data=polygon_from_region(inferior_limit, superior_limit, x),
         aes(x=x,y=y),
         fill=region_color,
         alpha=0.1
     )+
-    geom_jitter(data=datas, aes(x=x, y=superior_limit), color=dots_color, alpha=0.3)+
-    geom_jitter(data=datas, aes(x=x, y=inferior_limit), color=dots_color, alpha=0.3)
-    return(plot_obj)
+    geom_jitter(data=data, aes(x=x, y=superior_limit), color=dots_color, alpha=0.3)+
+    geom_jitter(data=data, aes(x=x, y=inferior_limit), color=dots_color, alpha=0.3))
 }
 
 plot_quality_limits <- function(plot) {
@@ -103,12 +101,18 @@ read_data <- function(data_dir) {
 	return(pbsq)
 }
 
+plot_labels <-function(plot, x_label, y_label) {
+	plot <- plot + xlab(x_label)
+	plot <- plot + ylab(y_label)
+	return(plot)
+}
+
 plot_legend <-function(plot) {
 	out_color="#eded44"
 	middle_color="#01cbf3"
 	in_color="#43640b"
 	mean_color="#fdd65d"
-    median_color="#f6a801"
+        median_color="#f6a801"
 
 	labels <- data.frame(Regions=c(out_color, middle_color, in_color), labels=c("P10-P90", "Q1-Q3", "Mean-Median"))
 	values <- labels$Regions; names(values)=labels$labels
@@ -116,30 +120,35 @@ plot_legend <-function(plot) {
 		geom_tile() +
 		scale_fill_manual(name="Regions", values=values)
 	glegend
+
+    x_breaks <- c(1:9, seq(from=11, to=38, by=3))
+	x_labels <- levels(data$Base)[x_breaks]
+	plot <- plot + scale_x_continuous(breaks=x_breaks, labels=x_labels)
+	y_breaks <- seq(from=0, to=42, by=2)
+	plot <- plot + ylim(0, 42) + scale_y_continuous(breaks=y_breaks, labels=as.character(y_breaks))
 	return(plot)
 }
 
-plot_axis <-function(plot_obj, data, x_label, y_label) {
+plot_axis <-function(plot_obj, data) {
 	x_breaks <- c(1:9, seq(from=11, to=38, by=3))
 	x_labels <- levels(data$Base)[x_breaks]
-	plot_obj <- plot_obj + 
-        scale_x_continuous(name=x_label, breaks=x_breaks, labels=x_labels)
+	plot_obj <- plot_obj + scale_x_continuous(breaks=x_breaks, labels=x_labels)
 	y_breaks <- seq(from=0, to=42, by=2)
-	plot_obj <- plot_obj + 
-        scale_y_continuous(name=y_label, breaks=y_breaks, labels=as.character(y_breaks), 
-            limits=c(0, 42))
+	plot_obj <- plot_obj + ylim(0, 42) + scale_y_continuous(breaks=y_breaks, labels=as.character(y_breaks))
 	return(plot_obj)
 }
 
-quality_plot <- function(datas, out_color="#eded44", middle_color="#01cbf3", in_color="#43640b", mean_color="#fdd65d", median_color="#f6a801") {
-    invisible(force(datas))
-    quality_p <- plot_region(datas$P10, datas$P90, datas$x, out_color, out_color)
-	quality_p <- plot_region(datas$Q1, datas$Q3, datas$x, middle_color, middle_color, quality_p)
-	quality_p <- plot_region(datas$Mean, datas$Q2, datas$x, in_color, in_color, quality_p)
+quality_plot <- function(data_dir, out_color="#eded44", middle_color="#01cbf3", in_color="#43640b", mean_color="#fdd65d", median_color="#f6a801") {
+	data <- read_data(data_dir)
+
+	quality_p <- plot_region(data$P10, data$P90, data$x, out_color, out_color)
+	quality_p <- plot_region(data$Q1, data$Q3, data$x, middle_color, middle_color, quality_p)
+	quality_p <- plot_region(data$Mean, data$Q2, data$x, in_color, in_color, quality_p)
 	quality_p <- plot_quality_limits(quality_p)
-	quality_p <- plot_trend_line(coordinates=data.frame(x=datas$x, y=datas$Q2), median_color, quality_p)
-	quality_p <- plot_trend_line(coordinates=data.frame(x=datas$x, y=datas$Mean), mean_color, quality_p)
-	quality_p <- plot_axis(quality_p, datas, "Position in read (bp)", "Quality (10 ⨉ -log(pe))")
+	quality_p <- plot_trend_line(coordinates=data.frame(x=data$x, y=data$Q2), median_color, quality_p)
+	quality_p <- plot_trend_line(coordinates=data.frame(x=data$x, y=data$Mean), mean_color, quality_p)
+	quality_p <- plot_labels(quality_p, "Position in read (bp)", "Quality (10 ⨉ -log(pe))")
+	quality_p <- plot_axis(quality_p, data)
 	return(quality_p)
 }
 
@@ -205,6 +214,6 @@ test <- function() {
     data <- read_data("/home/cfresno/ssh/castillo/tmp/pbsq")
 	datum <- subset(data, Subject=="SM-3MG3L" & Lane=="L1" & PairEnd=="1")
 	fastqc_plot(datum)
-	quality_plot(data)
+	quality_plot("/home/cfresno/ssh/castillo/tmp/pbsq")
 	fastqc_plot(fastq_summary(data))
 }
