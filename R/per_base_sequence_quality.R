@@ -71,6 +71,7 @@ polygon_from_region <- function(inferior_limit, superior_limit, x){
 plot_region <- function(inferior_limit, superior_limit, x, region_color, dots_color, plot_obj=ggplot()) {
     datas <- data.frame(inferior_limit, superior_limit, x)
     polygon_data <- polygon_from_region(inferior_limit, superior_limit, x)
+    force(polygon_data)
     plot_obj <- plot_obj+
     geom_polygon(
         data=polygon_data,
@@ -131,7 +132,7 @@ plot_axis <-function(plot_obj, data, x_label, y_label) {
 }
 
 quality_plot <- function(datas, out_color="#eded44", middle_color="#01cbf3", in_color="#43640b", mean_color="#fdd65d", median_color="#f6a801") {
-    #invisible(eval(datas))
+    invisible(force(datas))
     quality_p <- plot_region(datas$P10, datas$P90, datas$x, out_color, out_color)
 	quality_p <- plot_region(datas$Q1, datas$Q3, datas$x, middle_color, middle_color, quality_p)
 	quality_p <- plot_region(datas$Mean, datas$Q2, datas$x, in_color, in_color, quality_p)
