@@ -133,13 +133,13 @@ plot_axis <-function(plot_obj, data) {
 	x_breaks <- c(1:9, seq(from=11, to=38, by=3))
 	x_labels <- levels(data$Base)[x_breaks]
 	plot_obj <- plot_obj + scale_x_continuous(breaks=x_breaks, labels=x_labels)
-	y_breaks <- seq(from=0, to=42, by=2)
-	plot_obj <- plot_obj + ylim(0, 42) + scale_y_continuous(breaks=y_breaks, labels=as.character(y_breaks))
 	return(plot_obj)
 }
 
 quality_plot <- function(data, out_color="#eded44", middle_color="#01cbf3", in_color="#43640b", mean_color="#fdd65d", median_color="#f6a801") {
-	quality_p <- plot_region(data$P10, data$P90, data$x, out_color, out_color)
+	y_breaks <- seq(from=0, to=42, by=2)
+	quality_p <- ggplot() + scale_y_continuous(breaks=y_breaks, labels=as.character(y_breaks), limits(0,42))
+	quality_p <- plot_region(data$P10, data$P90, data$x, out_color, out_color, quality_p)
 	quality_p <- plot_region(data$Q1, data$Q3, data$x, middle_color, middle_color, quality_p)
 	quality_p <- plot_region(data$Mean, data$Q2, data$x, in_color, in_color, quality_p)
 	quality_p <- plot_quality_limits(quality_p)
