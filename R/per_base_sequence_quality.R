@@ -175,6 +175,30 @@ fastqc_plot <-  function(datum){
     return(sp)
 }
 
+fastqc_summary_boxplot <-function(data){
+    fastqc_melt <- melt(data[, c(1:7, ncol(data))], id=c("Base", "x"))
+    mean_points <- tapply(fastqc_melt$value, INDEX=fastqc_melt$Base, mean)
+    data_mean <- data.frame(x=names(mean_points), Mean=mean_points)
+    x_breaks <- c(1:9, seq(from=11, to=38, by=3))
+    x_labels <- levels(data$Base)
+    x_labels[-x_breaks] <- ""
+    y_breaks <- seq(from=0, to=42, by=2)
+    xMax <- max(fastqc_melt$x)
+    background <- data.frame(
+                    x=rep(c(0,xMax,xMax,0),3),
+                    y=c(c(0,0,20,20),c(20,20,28,28),c(28,28,42,42)),
+                    Quality=c(rep("Bad", 4),rep("Intermediate", 4),rep("Good", 4)))
+    p <- ggplot(fastqc_melt, aes(x=Base, y=value)) + 
+        geom_polygon(data=background, aes(x=x, y=y, group=Quality, fill=Quality))+
+        geom_boxplot(fill="yellow") +
+        geom_line(data=data_mean, aes(x=x, y=Mean, group=1), color="blue")+
+        theme(legend.position="bottom")
+    p <- plot_labels(p, "Position in read (bp)", "Quality (10 ⨉ -log(pe))")
+    p <- p + scale_x_discrete(labels=x_labels)
+    p <- p + ylim(0, 42) + scale_y_continuous(breaks=y_breaks, labels=as.character(y_breaks))
+    return(p)
+}
+
 fastq_summary <-function(data){
     return(data.frame(
         Base = as.factor(levels(data$Base)),
