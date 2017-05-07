@@ -38,12 +38,15 @@ plot_reads_per_subject <- function(fastq){
 	total_reads <- sort(total_reads)
 	subjects <- names(total_reads)
 	fastq$Subject <- factor(as.character(fastq$Subject), levels=subjects)
-	plot_reads <- ggplot(data=fastq, aes(x=Subject, y=Reads, fill=Sequencer)) + geom_boxplot() +
-		geom_line(data=data.frame(
-			Subject=factor(subjects, levels=subjects), 
-			Total_Reads= total_reads
+	plot_reads <- ggplot(data=fastq, aes(x=Subject, y=log(Reads))) + 
+		geom_boxplot() +
+		geom_line(
+			data=data.frame(
+				 Subject=subjects, 
+				Total_Reads=log(total_reads)
 			), 
-			aes(x=Subject, y=Total_Reads, color=Subject))
+			aes(x=Subject, y=Total_Reads, group=1)
+		)
 	return(plot_reads)
 }
 
