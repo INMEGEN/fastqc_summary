@@ -2,9 +2,9 @@ library("ggplot2")
 library("reshape2")
 library("cowplot")
 
-read_data <- function(file_name="summary.txt"){
-	fastq <- read.table(file_name, header=FALSE)
-	names(fastq)[1:8]<-c("Reads", "FileName", "Sequencer", "Run", "Flowcel", "Pair", "N", "Bad")
+read_data <- function(file_name="experiment.stats"){
+	fastq <- read.table(file_name, header=TRUE)
+	names(fastq)[1:8]<-c("Reads", "FileName", "Sequencer", "Run", "Flowcel", "Pair", "Bad", "Control")
 	fastq$filename <- gsub(fastq$FileName, pattern=".fq.gz", replacement="")
 	fastq$filename <- gsub(fastq$FileName, pattern="data/", replacement="")
 	fastq$Run <- factor(fastq$Run)
@@ -21,8 +21,8 @@ read_data <- function(file_name="summary.txt"){
 check_integrity <- function(fastq){
 	stopifnot(all(fastq$Flowcel == fastq$Flowcell)); fastq$Flowcel <- NULL
 	stopifnot(all(fastq$Pair == fastq$PairEnd)); fastq$PairEnd <- NULL
-	stopifnot(all(fastq$Bad == 0)); fastq$Bad <- NULL
-	stopifnot(all(fastq$N == "N")); fastq$N <- NULL
+	stopifnot(all(fastq$Control == 0)); fastq$Control <- NULL
+	stopifnot(all(fastq$Bad == "N")); fastq$Bad <- NULL
 	return(fastq)
 }
 
@@ -38,17 +38,12 @@ plot_reads_per_subject <- function(fastq){
 	total_reads <- sort(total_reads)
 	subjects <- names(total_reads)
 	fastq$Subject <- factor(as.character(fastq$Subject), levels=subjects)
-	plot_reads <- ggplot(data=fastq, aes(x=Subject, y=log(Reads, base=10))) + 
+	plot_reads <- ggplot(data=fastq, aes(x=Subject, y=Reads/10^6)) + 
 		geom_boxplot() +
-		geom_line(
-			data=data.frame(
-				 Subject=subjects, 
-				Total_Reads=log(total_reads, base=10)
-			), 
-			aes(x=Subject, y=Total_Reads, group=1)
-		) + 
 		scale_x_discrete("Subject", labels=1:length(subjects)) +
-		ylab("log_10(Reads)")
+		ylab("Reads [x 10^6]") +
+		geom_hline(aes(yintercept=mean(fastq$Reads)/10^6), color="blue", linetype="dashed") +
+		scale_color_manual("Mean", values="blue")
 	return(plot_reads)
 }
 
