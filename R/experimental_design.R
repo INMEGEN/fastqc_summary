@@ -7,11 +7,14 @@ read_data <- function(file_name="summary.txt"){
 	names(fastq)[1:8]<-c("Reads", "FileName", "Sequencer", "Run", "Flowcel", "Pair", "N", "Bad")
 	fastq$filename <- gsub(fastq$FileName, pattern=".fq.gz", replacement="")
 	fastq$filename <- gsub(fastq$FileName, pattern="data/", replacement="")
+	fastq$Run <- factor(fastq$Run)
 	design <- do.call(rbind, strsplit(gsub(fastq$FileName,
 		pattern=".fq.gz", replacement=""), split="_"))
 	colnames(design)<-c("Subject", "NA1", "Flowcell", "Lane", "PairEnd")
 	fastq <- cbind(fastq, design)
 	fastq$Subject <- factor(as.character(fastq$Subject), levels = sample(levels(fastq$Subject)))
+	fastq$Flowcell <- factor(as.character(fastq$Flowcell), levels = sample(levels(fastq$Flowcell)))
+	fastq$Lane <- as.integer(gsub(fastq$Lane, pattern="L", replacement=""))
 	return(fastq)
 }
 
@@ -24,8 +27,9 @@ check_integrity <- function(fastq){
 }
 
 plot_sequencing <- function(fastq){
-	plot_design <- ggplot(data=fastq, aes(x=Lane, y=Subject, fill=Subject)) +
-		geom_tile() + facet_grid(. ~ Sequencer) 
+	plot_design <- ggplot(data=fastq, aes(x=Lane, y=Subject, fill=Flowcell)) +
+		geom_tile() + facet_grid(. ~ Sequencer) +
+		theme(panel.grid.major = element_line("black", size = 0.1))
 	return(plot_design)
 }
 
