@@ -138,9 +138,7 @@ plot_axis <-function(plot_obj, data) {
 	return(plot_obj)
 }
 
-quality_plot <- function(data_dir, out_color="#eded44", middle_color="#01cbf3", in_color="#43640b", mean_color="#fdd65d", median_color="#f6a801") {
-	data <- read_data(data_dir)
-
+quality_plot <- function(data, out_color="#eded44", middle_color="#01cbf3", in_color="#43640b", mean_color="#fdd65d", median_color="#f6a801") {
 	quality_p <- plot_region(data$P10, data$P90, data$x, out_color, out_color)
 	quality_p <- plot_region(data$Q1, data$Q3, data$x, middle_color, middle_color, quality_p)
 	quality_p <- plot_region(data$Mean, data$Q2, data$x, in_color, in_color, quality_p)
