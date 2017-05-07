@@ -18,11 +18,12 @@ inmegen <- quality_plot(inmegen_data)
 
 ##Full data fastqc plots
 comparison <- plot_grid(
-	plotlist=list(NULL, NULL, NULL,raw, bgi, inmegen),
+	plotlist=list(raw, bgi, inmegen),
 	labels=c("Raw", "BGI", "INMEGEN"),
 	ncol=3,
-	nrow=2,
-	rel_heights=c(0.05, 0.95)
+	nrow=1,
+	rel_heights=c(0.05, 0.95),
+	hjust=-1
 )
 comparison
 
