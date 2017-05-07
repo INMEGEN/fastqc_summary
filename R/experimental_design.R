@@ -12,8 +12,6 @@ read_data <- function(file_name="summary.txt"){
 	colnames(design)<-c("Subject", "NA1", "Flowcell", "Lane", "PairEnd")
 	fastq <- cbind(fastq, design)
 	fastq$Subject <- factor(as.character(fastq$Subject), levels = sample(levels(fastq$Subject)))
-	fastq$Run <- factor(fastq$Run)
-	fastq$Lane <- as.integer(gsub(fastq$Lane, pattern="L", replacement=""))	
 	return(fastq)
 }
 
@@ -26,8 +24,8 @@ check_integrity <- function(fastq){
 }
 
 plot_sequencing <- function(fastq){
-	plot_design <- ggplot(data=fastq, aes(x=Lane, y=Subject, color=Subject, group=Pair)) +
-		geom_point() + geom_jitter() + facet_grid(Flowcell ~ Sequencer) 
+	plot_design <- ggplot(data=fastq, aes(x=Lane, y=Pair, color=Subject)) +
+		geom_point() + geom_jitter() + facet_grid(Run ~ Sequencer) 
 	return(plot_design)
 }
 
