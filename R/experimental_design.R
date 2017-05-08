@@ -53,7 +53,26 @@ plot_reads_per_subject <- function(fastq){
 fastq <- read_data()
 fastq <- check_integrity(fastq)
 sequencing <- plot_sequencing(fastq)
-#plot_reads_per_subject(fastq)
+sequencing
+#Screenshot saving plot
+
+#Reads level
+raw <- check_integrity(read_data("raw_reads.txt"))
+bgi <- check_integrity(read_data("bgi_reads.txt"))
+inmegen <- check_integrity(read_data("inmegen_reads.txt"))
+
+raw_plot <- plot_reads_per_subject(raw)
+bgi_plot <- plot_reads_per_subject(bgi)
+inmegen_plot <- plot_reads_per_subject(inmegen)
+
+reads <- plot_grid(
+	plotlist=list(raw, bgi, inmegen),
+	ncol=3,
+	nrow=1,
+	labels=c("RAW", "BGI", "INMEGEN"),
+	hjust=-1
+)
+reads
 
 #How many Flowcell were used by each subject?
 #table(rowSums(with(unique(fastq[, c("Subject", "Flowcell")]), table(Subject, Flowcell))))
