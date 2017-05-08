@@ -57,9 +57,10 @@ sequencing
 #Screenshot saving plot
 
 #Reads level
-raw <- check_integrity(read_data("raw_reads.txt"))
-bgi <- check_integrity(read_data("bgi_reads.txt"))
-inmegen <- check_integrity(read_data("inmegen_reads.txt"))
+raw <- check_integrity(read_data("../data/raw.info"))
+bgi <- check_integrity(read_data("../data/clean.info"))
+inmegen_paired <- check_integrity(read_data("../data/trimmomatic.paired.info"))
+inmegen_unpaired <- check_integrity(read_data("../data/trimmomatic.unpaired.info"))
 
 raw_plot <- plot_reads_per_subject(raw)
 bgi_plot <- plot_reads_per_subject(bgi)
