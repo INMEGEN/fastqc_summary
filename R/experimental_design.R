@@ -50,7 +50,8 @@ plot_reads_per_subject <- function(fastq){
 	fastq$Subject <- factor(as.character(fastq$Subject), levels=subjects)
 	plot_reads <- ggplot(data=fastq, aes(x=Subject, y=Reads/10^6)) + 
 		geom_boxplot() +
-		scale_x_discrete("Subject", labels=1:length(subjects)) +
+		scale_x_discrete("Subject", labels=1:length(subjects))+ 
+		ylim(0, 120)+
 		ylab("Reads [x 10^6]") +
 		geom_hline(aes(yintercept=mean(fastq$Reads)/10^6, color="Mean"), linetype="dashed") +
 		scale_colour_manual("", values=c("Mean"="blue"))
