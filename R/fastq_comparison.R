@@ -34,17 +34,18 @@ comparison
 #Save with screenshoot, transparency not supported
 
 ## Summary fastqc plots
-#compare <- plot_grid(
-#	plotlist=list(NULL, NULL, 
-#        fastqc_plot(fastq_summary(raw_data)),
-#        fastqc_summary_boxplot(raw_data)),
-#	labels=c("Summary", "Using boxplots"),
-#	ncol=2,
-#	nrow=2,
-#	rel_heights=c(0.05, 0.95),
-#	hjust=-1
-#)
-#compare
+compare <- plot_grid(
+	plotlist=list(
+		fastqc_plot(fastq_summary(raw_data)),
+		fastqc_plot(fastq_summary(bgi_data)),
+		fastqc_plot(fastq_summary(inmegen_data))
+	),
+	labels=c("RAW", "BGI", "INMEGEN"),
+	ncol=3,
+	nrow=1,
+	hjust=-1
+)
+compare
 #
 #data_dir<-"/home/cfresno/ssh/castillo/tmp/summary/data"
 #data <- readPSQS(data_dir, group="Raw")
