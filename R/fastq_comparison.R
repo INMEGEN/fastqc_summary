@@ -46,15 +46,4 @@ compare <- plot_grid(
 	hjust=-1
 )
 compare
-#
-#data_dir<-"/home/cfresno/ssh/castillo/tmp/summary/data"
-#data <- readPSQS(data_dir, group="Raw")
-#mean_quality <- plot_mean_quality_density(data)
 
-#raw_psqs <- readPSQS("data/raw", group="Raw")
-#bgi_psqs <- readPSQS("data/clean", group="BGI")
-#inmegen_psqs <- readPSQS("data/trimmomatic", group="INMEGEN")
-#
-#mean_quality <- plot_mean_quality_density(data)
-
-#save.image(file="results/Comparison.RData", compress="xz")
