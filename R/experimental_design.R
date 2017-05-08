@@ -2,23 +2,30 @@ library("ggplot2")
 library("reshape2")
 library("cowplot")
 
+#function(name)
+#	names(fastq)<-sapply(names(fastq), function(x){
+#		paste(toupper(substr(x,1,1)),
+#			substr(x, 2, nchar(x)), sep="")
+#	})
+#}
+
 read_data <- function(file_name="experiment.stats"){
 	fastq <- read.table(file_name, header=TRUE)
-	names(fastq)<-sapply(names(fastq), function(x){
-		paste(toupper(substr(x,1,1)), 
-			substr(x, 2, nchar(x)), sep="")
-	})
-	fastq$Filename <- gsub(fastq$Filename, pattern=".fq.gz", replacement="")
-	fastq$Filename <- gsub(fastq$Filename, pattern="data/", replacement="")
 	fastq$Run <- factor(fastq$Run)
-	design <- do.call(rbind, strsplit(gsub(fastq$Filename,
-		pattern=".fq.gz", replacement=""), split="_"))
-	colnames(design)<-c("Subject", "NA1", "Flowcell", "Lanes", "PairEnd")
 	fastq <- cbind(fastq, design)
+	design <- design_from_filename(fastq$Filename)
+	colnames(design)<-c("Subject", "NA1", "Flowcell", "Lanes", "PairEnd")
 	fastq$Subject <- factor(as.character(fastq$Subject), levels = sample(levels(fastq$Subject)))
 	fastq$Flowcel <- factor(as.character(fastq$Flowcel), levels = sample(levels(fastq$Flowcel)))
 	fastq$Lanes <- gsub(fastq$Lanes, pattern="L", replacement="")
 	return(fastq)
+}
+
+design_from_filename <- function(filename) {
+	basename <- gsub(filename, pattern=".fq.gz", replacement="")
+	design <- strsplit(basename, split="_")
+	design <- do.call(rbind, design)
+	return(design)
 }
 
 check_integrity <- function(fastq){
