@@ -12,9 +12,9 @@ library("cowplot")
 read_data <- function(file_name="experiment.stats"){
 	fastq <- read.table(file_name, header=TRUE)
 	fastq$Run <- factor(fastq$Run)
-	fastq <- cbind(fastq, design)
 	design <- design_from_filename(fastq$Filename)
-	colnames(design)<-c("Subject", "NA1", "Flowcell", "Lanes", "PairEnd")
+	colnames(design)<-c("Subject", "NA1", "Flowcel", "Lanes", "PairEnd")
+	fastq <- cbind(fastq, design)
 	fastq$Subject <- factor(as.character(fastq$Subject), levels = sample(levels(fastq$Subject)))
 	fastq$Flowcel <- factor(as.character(fastq$Flowcel), levels = sample(levels(fastq$Flowcel)))
 	fastq$Lanes <- gsub(fastq$Lanes, pattern="L", replacement="")
@@ -57,7 +57,7 @@ plot_reads_per_subject <- function(fastq){
 	return(plot_reads)
 }
 
-fastq <- read_data()
+fastq <- read_data("../data/raw.info")
 fastq <- check_integrity(fastq)
 sequencing <- plot_sequencing(fastq)
 sequencing
@@ -69,12 +69,15 @@ bgi <- check_integrity(read_data("../data/clean.info"))
 inmegen_paired <- check_integrity(read_data("../data/trimmomatic.paired.info"))
 inmegen_unpaired <- check_integrity(read_data("../data/trimmomatic.unpaired.info"))
 
+inmegen <- inmegen_paired
+inmegen$Reads <- inmegen_paired$Reads + inmegen_unpaired$Reads
+
 raw_plot <- plot_reads_per_subject(raw)
 bgi_plot <- plot_reads_per_subject(bgi)
 inmegen_plot <- plot_reads_per_subject(inmegen)
 
 reads <- plot_grid(
-	plotlist=list(raw, bgi, inmegen),
+	plotlist=list(raw_plot, bgi_plot, inmegen_plot),
 	ncol=3,
 	nrow=1,
 	labels=c("RAW", "BGI", "INMEGEN"),
