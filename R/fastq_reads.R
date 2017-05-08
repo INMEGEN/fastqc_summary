@@ -16,5 +16,5 @@ library("cowplot")
 # inmegen_psqs <- readPSQS("data/trimmomatic", group="INMEGEN")
 # save.image(file="results/Reads.RData", compress="xz")
 
-plot_mean_quality_density(rbind(raw_psqs, bgi_psqs, inmegen_psqs))
-
+mean_plot <- plot_mean_quality_density(rbind(raw_psqs, bgi_psqs, inmegen_psqs))
+mean_plot
