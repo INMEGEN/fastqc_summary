@@ -76,7 +76,7 @@ plot_region <- function(inferior_limit, superior_limit, x, region_color, dots_co
         data=polygon_from_region(inferior_limit, superior_limit, x),
         aes(x=x,y=y),
         fill=region_color,
-        alpha=0.1
+        alpha=0.2
     )+
     geom_jitter(data=data, aes(x=x, y=superior_limit), color=dots_color, alpha=0.3)+
     geom_jitter(data=data, aes(x=x, y=inferior_limit), color=dots_color, alpha=0.3))
