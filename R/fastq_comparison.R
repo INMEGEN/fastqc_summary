@@ -26,6 +26,12 @@ comparison <- plot_grid(
 	hjust=-1
 )
 comparison
+##FIXME to save the file
+#ggsave(comparison, file="comparison.png", dpi=300, device="cairo")
+#png(file="comparison.png", res=300, width=1024, height=720, type="cairo")
+#comparison
+#dev.off()
+#Save with screenshoot, transparency not supported
 
 ## Summary fastqc plots
 #compare <- plot_grid(
