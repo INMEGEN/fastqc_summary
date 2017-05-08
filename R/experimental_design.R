@@ -28,10 +28,11 @@ check_integrity <- function(fastq){
 	return(fastq)
 }
 
+##FIXME change the grid to border each subject
 plot_sequencing <- function(fastq){
-	plot_design <- ggplot(data=fastq, aes(x=Lane, y=Subject, fill=Flowcell)) +
-		geom_tile() + facet_grid(. ~ Sequencer) +
-		theme(panel.grid.major = element_line("black", size = 0.1))
+	plot_design <- ggplot(data=fastq, aes(x=Lane, y=Subject, fill=Flowcell)) +		geom_tile() + facet_grid(. ~ Sequencer) +
+		theme(panel.grid.major = element_line("black", size = 0.1))+
+		guides(fill=guide_legend(ncol=1))
 	return(plot_design)
 }
 
@@ -50,8 +51,8 @@ plot_reads_per_subject <- function(fastq){
 }
 
 fastq <- read_data()
-#fastq <- check_integrity(fastq)
-#plot_sequencing(fastq)
+fastq <- check_integrity(fastq)
+sequencing <- plot_sequencing(fastq)
 #plot_reads_per_subject(fastq)
 
 #How many Flowcell were used by each subject?
